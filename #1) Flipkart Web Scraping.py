@@ -11,13 +11,13 @@ file_name = f"Flipkart Scraping on {product}.csv"
 if os.path.exists(file_name):
 	print("You have already searched for this...\nDeleting your previous results...")
 	os.system(f"rm '{file_name}'")
-file = open(file_name,"w")
-csv_file = csv.writer(file)
-csv_file.writerow(["TITLE","Price","Rating"])#,"Features"])
 
 # Looping through the requested no. of pages
 for i in range(pages):
 	try:
+		file = open(file_name,"w")
+		csv_file = csv.writer(file)
+		csv_file.writerow(["TITLE","Price","Rating"])#,"Features"])
 		url = "https://www.flipkart.com"+search
 		html = requests.get(url)
 		print("Working on Page No :",i+1)
@@ -32,9 +32,13 @@ for i in range(pages):
 			# for feature in mobile_area.find_all(class_ = "tVe95H"):
 			# 	features.append(feature.text)
 			csv_file.writerow([title.text,price.text[1:],rating])#,features])
+		# navagating to the Next Page!!! [-1] here is for selecting the Next Page since we have (Previous, Next) with same class name.
+		search = soup.find_all(class_ = "_3fVaIS")[-1]
+		search = search["href"]
+	except IndexError:
+		print("Out Of Pages for your search!!!")
+		break
 	except:
 		print("One Item Skiped Due to internal error")
-	# navagating to the Next Page!!! [-1] here is for selecting the Next Page since we have (Previous, Next) with same class name.
-	search = soup.find_all(class_ = "_3fVaIS")[-1]["href"]
-
+		
 file.close()
